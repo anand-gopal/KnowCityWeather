@@ -7,10 +7,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ana.knowcityweather.data.City
+import com.ana.knowcityweather.model.CityModel
 import com.ana.knowcityweather.utils.inflate
 import kotlinx.android.synthetic.main.city_item.view.*
 import kotlinx.android.synthetic.main.layout_home.*
+import androidx.navigation.fragment.findNavController
 
 class HomeFragment : BaseFragment() {
     private lateinit var cityModel: CityViewModel
@@ -28,6 +29,7 @@ class HomeFragment : BaseFragment() {
         cityModel.getCityLiveData().observe(activity!!, Observer { list->
             cityAdapter.notifyDataSetChanged()
         })
+        addCity.setOnClickListener { findNavController().navigate(R.id.addCityFragment) }
     }
 
     override fun onResume() {
@@ -56,7 +58,7 @@ class HomeFragment : BaseFragment() {
 
         class CityHolder(private var view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-            private var city: City? = null
+            private var cityModel: CityModel? = null
 
             init {
                 view.setOnClickListener(this)
@@ -67,7 +69,7 @@ class HomeFragment : BaseFragment() {
             }
 
             fun bind(city: Any?){
-                this.city = city as City?
+                this.cityModel = city as CityModel?
                 view.name.text = city?.name
                 view.temp.text = city?.prevTemp.toString()
             }

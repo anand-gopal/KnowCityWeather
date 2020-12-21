@@ -7,8 +7,26 @@
 
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/home_fragment"
         android:name="com.ana.knowcityweather.HomeFragment"
         tools:layout="@layout/layout_home"
-        android:label="HomeFragment" />
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_home_fragment_to_addCityFragment"
+            app:destination="@id/addCityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCityFragment"
+        android:name="com.ana.knowcityweather.AddCityFragment"
+        android:label="AddCityFragment"
+        tools:layout="@layout/layout_add_city">
+        <action
+            android:id="@+id/action_addCityFragment_to_cityForecastFragment"
+            app:destination="@id/cityForecastFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cityForecastFragment"
+        android:name="com.ana.knowcityweather.CityForecastFragment"
+        android:label="CityForecastFragment"
+        tools:layout="@layout/layout_forecast"/>
 </navigation>

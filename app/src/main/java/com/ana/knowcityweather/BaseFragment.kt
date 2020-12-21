@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
 
 abstract class BaseFragment : Fragment() {
 
@@ -13,9 +14,14 @@ abstract class BaseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(getResId(), container, false)
+        return inflater.inflate(getResId(), container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val back: View? = view.findViewById<View>(R.id.back)
+        back?.setOnClickListener{ findNavController(this).navigateUp() }
         init(view)
-        return view
     }
 
     abstract fun init(view: View?)

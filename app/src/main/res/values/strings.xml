@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">KnowCityWeather</string>
     <string name="bookmarked_cities">Bookmarked Cities</string>
+    <string name="search_city">Search City</string>
+    <string name="weather">Weather</string>
+    <string name="bookmark">Bookmark</string>
 </resources>
