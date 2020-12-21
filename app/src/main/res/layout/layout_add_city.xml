@@ -32,7 +32,7 @@
             <TextView
                 android:id="@+id/title"
                 style="@style/RegularText"
-                android:text="@string/bookmarked_cities"
+                android:text="@string/search_city"
                 android:textSize="20sp"
                 android:layout_marginLeft="20dp"
                 app:layout_constraintLeft_toRightOf="@+id/back"

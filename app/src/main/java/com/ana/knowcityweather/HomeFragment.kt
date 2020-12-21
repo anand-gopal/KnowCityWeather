@@ -12,6 +12,8 @@ import com.ana.knowcityweather.utils.inflate
 import kotlinx.android.synthetic.main.city_item.view.*
 import kotlinx.android.synthetic.main.layout_home.*
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment() {
     private lateinit var cityModel: CityViewModel
@@ -22,11 +24,12 @@ class HomeFragment : BaseFragment() {
             activity!!,
             ViewModelProvider.NewInstanceFactory()
         ).get(CityViewModel::class.java)
-        cityModel.setCityList(cityList)
         cityRecycler.layoutManager = LinearLayoutManager(activity?.applicationContext)
         val cityAdapter = CityAdapter(activity?.applicationContext, cityList)
         cityRecycler.adapter = cityAdapter
         cityModel.getCityLiveData().observe(activity!!, Observer { list->
+            cityList.clear()
+            cityList.addAll(list)
             cityAdapter.notifyDataSetChanged()
         })
         addCity.setOnClickListener { findNavController().navigate(R.id.addCityFragment) }
@@ -34,7 +37,9 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        activity?.applicationContext?.let { cityModel.fetchCityList(it) }
+        GlobalScope.launch {
+            activity?.applicationContext?.let { cityModel.fetchCityList(it) }
+        }
     }
 
     override fun getResId(): Int {
@@ -65,7 +70,7 @@ class HomeFragment : BaseFragment() {
             }
 
             override fun onClick(v: View) {
-                //TODO
+
             }
 
             fun bind(city: Any?){

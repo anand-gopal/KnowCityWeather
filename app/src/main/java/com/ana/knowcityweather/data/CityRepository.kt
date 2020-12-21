@@ -4,6 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.ana.knowcityweather.data.api.retrofit.RetrofitHelper
+import com.ana.knowcityweather.data.db.AppDatabase
+import com.ana.knowcityweather.data.db.CityDao
+import com.ana.knowcityweather.data.db.RoomDbHelper
+import com.ana.knowcityweather.model.CityModel
 import com.ana.knowcityweather.model.WeatherModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,6 +16,26 @@ import retrofit2.Response
 object CityRepository {
 
     private const val API_KEY = "f911fa88cfc4b8b8d760d7c2fdc042e7"
+
+    fun fetchCityList(context: Context): List<CityModel> {
+        return getCityDao(context).getAllCities()
+    }
+
+    fun bookmarkCity(context: Context, cityModel: CityModel){
+        getCityDao(context).addCity(cityModel)
+    }
+
+    fun updateCity(context: Context, cityModel: CityModel){
+        return getCityDao(context).updateCity(cityModel)
+    }
+
+    fun deleteCity(context: Context, cityModel: CityModel){
+        return getCityDao(context).deleteCity(cityModel)
+    }
+
+    private fun getCityDao(context: Context): CityDao {
+        return RoomDbHelper.getDatabase(context).cityDao()
+    }
 
     fun getCityForecast(
         context: Context?,

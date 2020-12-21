@@ -3,31 +3,53 @@ package com.ana.knowcityweather
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.ana.knowcityweather.model.CityModel
 import com.ana.knowcityweather.model.WeatherModel
 import com.ana.knowcityweather.utils.Constants
 import kotlinx.android.synthetic.main.layout_forecast.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CityForecastFragment : BaseFragment() {
 
-    private lateinit var cityModel: CityViewModel
+    private lateinit var cityViewModel: CityViewModel
+    private lateinit var weatherModel: WeatherModel
 
     override fun init(view: View?) {
         loader.visibility = View.VISIBLE
         mainContainer.visibility = View.GONE
-        bookmark.setOnClickListener{
-
+        bookmark.setOnClickListener {
+            GlobalScope.launch {
+                context?.applicationContext?.let { it1 ->
+                    weatherModel.city?.id?.let { it2 ->
+                        cityViewModel.bookmarkCity(
+                            it1, CityModel(
+                                weatherModel.city?.country,
+                                null,
+                                weatherModel.city?.name,
+                                it2,
+                                "",
+                                weatherModel?.list?.get(0)?.main?.temp,
+                                weatherModel?.city?.coord?.lon,
+                                weatherModel?.city?.coord?.lat
+                            )
+                        )
+                    }
+                }
+            }
         }
-        cityModel = ViewModelProvider(
+        cityViewModel = ViewModelProvider(
             activity!!,
             ViewModelProvider.NewInstanceFactory()
         ).get(CityViewModel::class.java)
-        cityModel.getCityForecastLiveData().observe(activity!!, Observer { model ->
+        cityViewModel.getCityForecastLiveData().observe(activity!!, Observer { model ->
             /* Populating extracted data into our views */
             try {
+                weatherModel = model
                 updateDataInUI(model)
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         })
@@ -38,7 +60,7 @@ class CityForecastFragment : BaseFragment() {
             address.text = "${city?.name} - ${city?.country}"
             updated_at.text =
                 "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
-                    Date(list?.get(0)?.dt?.toLong()?.times(1000)?:0)
+                    Date(list?.get(0)?.dt?.toLong()?.times(1000) ?: 0)
                 )
             status.text = list?.get(0)?.weather?.get(0)?.description?.capitalize()
             temp.text = list?.get(0)?.main?.temp.toString() + "°C"
@@ -65,7 +87,7 @@ class CityForecastFragment : BaseFragment() {
         activity?.applicationContext?.let {
             val city = arguments?.getString(Constants.CITY)
             city?.let { it1 ->
-                cityModel.getCityForecast(
+                cityViewModel.getCityForecast(
                     it,
                     it1
                 )
