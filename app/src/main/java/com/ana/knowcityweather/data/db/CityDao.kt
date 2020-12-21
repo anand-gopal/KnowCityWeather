@@ -7,14 +7,14 @@ import com.ana.knowcityweather.model.CityModel
 interface CityDao {
 
     @Query("Select * from city")
-    fun getAllCities(): List<CityModel>
+    suspend fun getAllCities(): List<CityModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addCity(cityModel: CityModel)
+    suspend fun addCity(cityModel: CityModel)
 
     @Delete
-    fun deleteCity(cityModel: CityModel)
+    suspend fun deleteCity(cityModel: CityModel)
 
     @Update
-    fun updateCity(cityModel: CityModel)
+    suspend fun updateCity(cityModel: CityModel)
 }

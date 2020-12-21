@@ -1,6 +1,7 @@
 package com.ana.knowcityweather
 
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.ana.knowcityweather.model.CityModel
@@ -15,30 +16,33 @@ import java.util.*
 class CityForecastFragment : BaseFragment() {
 
     private lateinit var cityViewModel: CityViewModel
-    private lateinit var weatherModel: WeatherModel
+    private var weatherModel: WeatherModel? = null
 
     override fun init(view: View?) {
         loader.visibility = View.VISIBLE
         mainContainer.visibility = View.GONE
+        val existing = arguments?.getBoolean(Constants.EXISTING)
+        bookmark.visibility =
+            if (existing == true) View.GONE else View.VISIBLE
         bookmark.setOnClickListener {
-            GlobalScope.launch {
-                context?.applicationContext?.let { it1 ->
-                    weatherModel.city?.id?.let { it2 ->
-                        cityViewModel.bookmarkCity(
-                            it1, CityModel(
-                                weatherModel.city?.country,
-                                null,
-                                weatherModel.city?.name,
-                                it2,
-                                "",
-                                weatherModel?.list?.get(0)?.main?.temp,
-                                weatherModel?.city?.coord?.lon,
-                                weatherModel?.city?.coord?.lat
-                            )
+            context?.applicationContext?.let { it1 ->
+                weatherModel?.city?.id?.let { it2 ->
+                    cityViewModel.bookmarkCity(
+                        it1, CityModel(
+                            weatherModel?.city?.country,
+                            null,
+                            weatherModel?.city?.name,
+                            it2,
+                            "",
+                            weatherModel?.list?.get(0)?.main?.temp,
+                            weatherModel?.city?.coord?.lon,
+                            weatherModel?.city?.coord?.lat
                         )
-                    }
+                    )
+                    Toast.makeText(context, "Bookmarked successful", Toast.LENGTH_LONG).show()
                 }
             }
+
         }
         cityViewModel = ViewModelProvider(
             activity!!,
@@ -49,14 +53,33 @@ class CityForecastFragment : BaseFragment() {
             try {
                 weatherModel = model
                 updateDataInUI(model)
+                if(existing == true) {
+                    updateCityData()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         })
     }
 
-    private fun updateDataInUI(model: WeatherModel) {
-        model.apply {
+    private fun updateCityData() {
+        weatherModel?.city?.id?.let { it ->
+            val cityModel = CityModel(
+                weatherModel?.city?.country,
+                null,
+                weatherModel?.city?.name,
+                it,
+                "",
+                weatherModel?.list?.get(0)?.main?.temp,
+                weatherModel?.city?.coord?.lon,
+                weatherModel?.city?.coord?.lat
+            )
+            cityViewModel.updateCityData(context?.applicationContext, cityModel)
+        }
+    }
+
+    private fun updateDataInUI(model: WeatherModel?) {
+        model?.apply {
             address.text = "${city?.name} - ${city?.country}"
             updated_at.text =
                 "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
@@ -77,8 +100,15 @@ class CityForecastFragment : BaseFragment() {
             wind.text = list?.get(0)?.wind?.speed.toString()
             pressure.text = list?.get(0)?.main?.pressure.toString()
             humidity.text = list?.get(0)?.main?.humidity.toString()
-            loader.visibility = View.GONE
             mainContainer.visibility = View.VISIBLE
+            errorText.visibility = View.GONE
+
+        }
+        loader.visibility = View.GONE
+        if (model == null) {
+            errorText.visibility = View.VISIBLE
+            mainContainer.visibility = View.GONE
+            bookmark.visibility = View.GONE
         }
     }
 

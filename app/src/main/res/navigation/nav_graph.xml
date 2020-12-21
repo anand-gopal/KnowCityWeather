@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_home_fragment_to_addCityFragment"
             app:destination="@id/addCityFragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_cityForecastFragment"
+            app:destination="@id/cityForecastFragment" />
     </fragment>
     <fragment
         android:id="@+id/addCityFragment"

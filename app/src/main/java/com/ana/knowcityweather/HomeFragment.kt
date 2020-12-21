@@ -3,6 +3,7 @@ package com.ana.knowcityweather
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import com.ana.knowcityweather.utils.inflate
 import kotlinx.android.synthetic.main.city_item.view.*
 import kotlinx.android.synthetic.main.layout_home.*
 import androidx.navigation.fragment.findNavController
+import com.ana.knowcityweather.utils.Constants
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -27,7 +29,7 @@ class HomeFragment : BaseFragment() {
         cityRecycler.layoutManager = LinearLayoutManager(activity?.applicationContext)
         val cityAdapter = CityAdapter(activity?.applicationContext, cityList)
         cityRecycler.adapter = cityAdapter
-        cityModel.getCityLiveData().observe(activity!!, Observer { list->
+        cityModel.getCityLiveData().observe(activity!!, Observer { list ->
             cityList.clear()
             cityList.addAll(list)
             cityAdapter.notifyDataSetChanged()
@@ -46,7 +48,7 @@ class HomeFragment : BaseFragment() {
         return R.layout.layout_home
     }
 
-    class CityAdapter(val context: Context?,val list: ArrayList<Any>) :
+    inner class CityAdapter(val context: Context?, val list: ArrayList<Any>) :
         RecyclerView.Adapter<CityAdapter.CityHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityHolder {
             val inflatedView = parent.inflate(R.layout.city_item, false)
@@ -61,7 +63,8 @@ class HomeFragment : BaseFragment() {
             holder.bind(list[position])
         }
 
-        class CityHolder(private var view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+        inner class CityHolder(private var view: View) : RecyclerView.ViewHolder(view),
+            View.OnClickListener {
 
             private var cityModel: CityModel? = null
 
@@ -70,10 +73,16 @@ class HomeFragment : BaseFragment() {
             }
 
             override fun onClick(v: View) {
-
+                findNavController().navigate(
+                    R.id.cityForecastFragment,
+                    bundleOf(
+                        Constants.CITY to cityModel?.name,
+                        Constants.EXISTING to true
+                    )
+                )
             }
 
-            fun bind(city: Any?){
+            fun bind(city: Any?) {
                 this.cityModel = city as CityModel?
                 view.name.text = city?.name
                 view.temp.text = city?.prevTemp.toString()

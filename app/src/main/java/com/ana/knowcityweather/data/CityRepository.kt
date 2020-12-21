@@ -17,19 +17,19 @@ object CityRepository {
 
     private const val API_KEY = "f911fa88cfc4b8b8d760d7c2fdc042e7"
 
-    fun fetchCityList(context: Context): List<CityModel> {
+    suspend fun fetchCityList(context: Context): List<CityModel> {
         return getCityDao(context).getAllCities()
     }
 
-    fun bookmarkCity(context: Context, cityModel: CityModel){
+    suspend fun bookmarkCity(context: Context, cityModel: CityModel){
         getCityDao(context).addCity(cityModel)
     }
 
-    fun updateCity(context: Context, cityModel: CityModel){
+    suspend fun updateCity(context: Context, cityModel: CityModel){
         return getCityDao(context).updateCity(cityModel)
     }
 
-    fun deleteCity(context: Context, cityModel: CityModel){
+    suspend fun deleteCity(context: Context, cityModel: CityModel){
         return getCityDao(context).deleteCity(cityModel)
     }
 
@@ -52,8 +52,12 @@ object CityRepository {
                 ) {
                     Log.v("Request ", call.request().url().toString())
                     Log.v("Response ", response.toString())
-                    val weatherModel: WeatherModel? = response.body()
-                    liveData.value = weatherModel
+                    if(response.isSuccessful) {
+                        val weatherModel: WeatherModel? = response.body()
+                        liveData.value = weatherModel
+                    } else {
+                        liveData.value = null
+                    }
                 }
 
                 override fun onFailure(

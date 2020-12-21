@@ -11,7 +11,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 
     <style name="RegularText">
@@ -35,6 +35,4 @@
         <item name="android:textColorHint">@color/textColorDisabled</item>
         <item name="android:tint">@color/textColorPrimary</item>
     </style>
-
-    <color name="textColorDisabled">#b3b3b3</color>
 </resources>
